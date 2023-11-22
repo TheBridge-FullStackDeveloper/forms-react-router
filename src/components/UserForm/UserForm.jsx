@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const UserForm = () => {
   const initialValue = {
@@ -6,6 +7,20 @@ export const UserForm = () => {
     email: "",
   };
   const [data, setData] = useState(initialValue);
+  const [btnDisabled, setBtnDisabled] = useState(true);
+  const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (data.name.length < 3) {
+      setMessage("Name must be at least 3 characters");
+      setBtnDisabled(true);
+    } else {
+      setMessage(null);
+      setBtnDisabled(false);
+    }
+  }, [data]);
 
   const handleInputChange = (e) => {
     setData({
@@ -18,7 +33,11 @@ export const UserForm = () => {
     e.preventDefault();
     console.log("info form", data);
     console.log(`Soy ${data.name} y mi correo es ${data.email}`);
-    setData(initialValue);
+    setMessage("Formulario enviado con éxito :D ! ! !");
+    setTimeout(() => {
+      setData(initialValue);
+      navigate("/");
+    }, 3000);
   };
 
   return (
@@ -38,8 +57,11 @@ export const UserForm = () => {
           name="email"
           value={data.email}
         />
-        <button type="submit">Enviar</button>
+        <button type="submit" disabled={btnDisabled}>
+          Enviar
+        </button>
       </form>
+      {message}
     </div>
   );
 };
